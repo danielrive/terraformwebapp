@@ -1,6 +1,4 @@
-#******** Target Groups ******
-
-#---------- Target Group ----------
+#******** Target Group ******
 
 resource "aws_alb_target_group" "TG_GROUP" {
   name                 = "TG-${var.ENVIRONMENT}"
