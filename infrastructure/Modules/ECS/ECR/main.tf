@@ -19,7 +19,7 @@ resource "aws_ecr_repository_policy" "ECR_REPOSITORY_POLICY" {
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${var.ACCOUNT_NAME}:root",
+                    "arn:aws:iam::${var.ACCOUNT_NAME}:root"
                 ]
             },
             "Action": [

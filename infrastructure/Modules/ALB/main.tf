@@ -14,7 +14,7 @@ resource "aws_alb" "ALB" {
   access_logs {
                 bucket  = "alb-logs-${var.ENVIRONMENT}-${var.RANDOM_ID}"
                 prefix  = "${var.ENVIRONMENT}"
-                enabled = "${var.ENABLE:LOGS}"
+                enabled = "${var.ENABLE_LOGS}"
               }
   tags = {
     Created_by = "Terraform"
@@ -31,7 +31,6 @@ resource "aws_alb_listener" "HTTP_LISTENER" {
     target_group_arn = "${var.TARGET_GROUP}"
     type             = "forward"
    }
-  }
   depends_on = [aws_alb.ALB]
 
 }

@@ -10,7 +10,7 @@ resource "aws_alb_target_group" "TG_GROUP" {
   health_check {
         enabled = true
         interval =  5
-        path =  "${var.Path}"
+        path =  "${var.PATH}"
         port = "${var.PORT_HEALTH_CHECKS}"
         protocol = "${var.PROTOCOL}"
         timeout =  3

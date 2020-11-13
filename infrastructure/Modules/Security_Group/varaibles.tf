@@ -22,6 +22,7 @@ variable "CIDRs_TO_ALLOW"{
 
 variable "SG_TO_ALLOW"{
   type = "list"
+  default = []
 }
 
 

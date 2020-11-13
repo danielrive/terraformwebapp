@@ -20,14 +20,14 @@ data "aws_caller_identity" "ID_Current_Account" {}
 module "Networking" {
   source         = "./Modules/Networking"
   CIDR           = ["10.100.0.0/16"]
-  Environment    = "${var.ENVIRONMENT_NAME}"
+  ENVIRONMENT    = "${var.ENVIRONMENT_NAME}"
 }
 
 
 # # # Security Group ALB # # #
 
 module "SG_ALB" {
-  source          = "../Modules/Security_Group"
+  source          = "./Modules/Security_Group"
   ENVIRONMENT     = "${var.ENVIRONMENT_NAME}"
   VPC             = module.Networking.VPC_ID
   PORT_TO_ALLOW   = 80
@@ -39,10 +39,10 @@ module "SG_ALB" {
 # # # Target Group # # #
 
 module "Target_WebAPP" {
-  source             = "../Modules/TargetGroup"
+  source             = "./Modules/TargetGroup"
   ENVIRONMENT        = "${var.ENVIRONMENT_NAME}"
   TG_PORT            = 80
-  VPC                = module.Networkings.VPC_ID
+  VPC                = module.Networking.VPC_ID
   PATH               = "/v1/health"
   PORT_HEALTH_CHECKS = "3000"
   TARGET_TYPE        = "ip"
@@ -52,7 +52,7 @@ module "Target_WebAPP" {
 # # # ALB  # # #
 
 module "ALB_WEBAPP" {
-  source           = "../Modules/ALB"
+  source           = "./Modules/ALB"
   ENVIRONMENT      = "${var.ENVIRONMENT_NAME}"
   SUBNETS          = [module.Networking.SubnetPublics[0],module.Networking.SubnetPublics[1]]
   SECURITY_GROUP   = module.SG_ALB.SG_ID
@@ -65,14 +65,14 @@ module "ALB_WEBAPP" {
 # # # ECS Cluster # # #
 
 module "ECS_Cluster_WEBAPP" {
-  source      = "../Modules/ECS/Cluster"
+  source      = "./Modules/ECS/Cluster"
   ENVIRONMENT = "${var.ENVIRONMENT_NAME}"
 }
 
 # # # ECR REPO # # #
 
 module "ECR_WEBAPP" {
-  source        = "../Modules/ECS/ECR"
+  source        = "./Modules/ECS/ECR"
   ACCOUNT_NAME  = "${data.aws_caller_identity.ID_Current_Account.account_id}"
   ENVIRONMENT   = "${var.ENVIRONMENT_NAME}"
 }
@@ -80,26 +80,27 @@ module "ECR_WEBAPP" {
 # # # IAM ROLE FOR ECS TASK # # #
 
 module "ECS_ROLE_WEBAPP" {
-  source       = "../Modules/IAM/ROLE"
+  source       = "./Modules/IAM/ROLE"
   ENVIRONMENT  = "${var.ENVIRONMENT_NAME}"
 }
 
 # # # ECS Task Definition # # #
 
 module "ECS_TF_WEBAPP" {
-  source          = "../Modules/ECS/Task_Definition"
+  source          = "./Modules/ECS/Task_Definition"
   ENVIRONMENT     = "${var.ENVIRONMENT_NAME}"
   CPU             = 512
   MEMORY          = 1024
-  URL_REPO        = module.ECR_WEBAPP.Repo_URL
+  URL_REPO        = "${module.ECR_WEBAPP.Repo_URL}:develop"
   ECS_ROLE        = module.ECS_ROLE_WEBAPP.ARN_ROLE
   AWS_REGION      =  "${var.AWS_REGION}"
   CONTAINER_PORT  = 9090
+  LAUNCH_TYPE     = "FARGATE"
 }
 
 
 module "SG_ECS" {
-  source          = "../Modules/Security_Group"
+  source          = "./Modules/Security_Group"
   ENVIRONMENT     = "${var.ENVIRONMENT_NAME}"
   SG_NAME         = "SG_ECS_TASK"
   VPC             = module.Networking.VPC_ID
@@ -110,7 +111,7 @@ module "SG_ECS" {
 # # # ECS Service # # #
 
 module "ECS_SERVICE_WEBAPP" {
-  source         = "../Modules/ECS/ROLE"
+  source         = "./Modules/ECS/Service"
   ENVIRONMENT    = "${var.ENVIRONMENT_NAME}"
   ALB            = module.ALB_WEBAPP.ALB_ARN
   CLUSTER_ID     = module.ECS_Cluster_WEBAPP.ARN_Cluster
@@ -119,5 +120,5 @@ module "ECS_SERVICE_WEBAPP" {
   SECURITY_GROUP =  module.SG_ECS.SG_ID
   SUBNETS        = [module.Networking.SubnetPrivates[0],module.Networking.SubnetPrivates[1]]
   TG_ARN         = module.Target_WebAPP.TargetGroup_ARN
-  CONTAINER_PORT = 3030
+  CONTAINER_PORT = 9090
 }

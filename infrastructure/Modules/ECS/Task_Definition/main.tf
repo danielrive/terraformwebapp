@@ -3,7 +3,7 @@
 resource "aws_ecs_task_definition" "ECS_TF" {
   family                   = "TaskDF-${var.ENVIRONMENT}-"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["${var.LAUNCH_TYPE}"]
+  requires_compatibilities = [var.LAUNCH_TYPE]
   cpu                      = "${var.CPU}"
   memory                   = "${var.MEMORY}"
   execution_role_arn       = "${var.ECS_ROLE}"

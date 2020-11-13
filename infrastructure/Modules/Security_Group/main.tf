@@ -15,8 +15,8 @@ resource "aws_security_group" "SG" {
     protocol    = "tcp"
     from_port   = "${var.PORT_TO_ALLOW}"
     to_port     = "${var.PORT_TO_ALLOW}"
-    cidr_blocks = ["${var.CIDRs_TO_ALLOW}"]
-    security_groups = ["${var.SG_TO_ALLOW}"]
+    cidr_blocks = var.CIDRs_TO_ALLOW
+    security_groups = var.SG_TO_ALLOW
   }
 
   egress {

@@ -28,3 +28,6 @@ variable "CONTAINER_PORT" {
     type = "string"
 }
 
+variable "LAUNCH_TYPE" {
+    type = "string"
+}
