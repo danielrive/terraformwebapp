@@ -1,35 +1,35 @@
 ####  Variables  ######
 
-variable "ENVIRONMENT"{
-  type = "string"    
+variable "ENVIRONMENT" {
+  type = string
 }
 
-variable "SUBNETS"{
-    type = "list"
+variable "SUBNETS" {
+  type = list
 }
 
-variable "SECURITY_GROUP"{
-    type = "string"
+variable "SECURITY_GROUP" {
+  type = string
 }
 
 variable "INTERNAL" {
-    default = false
+  default = false
 }
 
 variable "RANDOM_ID" {
-  type = "string"
+  type = string
 }
 
 variable "TARGET_GROUP" {
-  type = "string"
+  type = string
 }
 
 variable "ENABLE_LOGS" {
-  type = bool
+  type    = bool
   default = false
 }
 
 variable "IDLE_TIMEOUT" {
-  type = number
+  type    = number
   default = 60
 }

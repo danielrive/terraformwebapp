@@ -38,7 +38,7 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "attachment1" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-  role       = "${aws_iam_role.ECS_ROLE.name}"
+  role       = aws_iam_role.ECS_ROLE.name
   lifecycle {
     create_before_destroy = true
   }

@@ -2,13 +2,13 @@
 
 # ---- ECR repository ----
 resource "aws_ecr_repository" "ECR_REPOSITORY" {
-  name = "${var.ENVIRONMENT}"
+  name = var.ENVIRONMENT
 }
 
 
 # ----Policy fot the repository ----
 resource "aws_ecr_repository_policy" "ECR_REPOSITORY_POLICY" {
-  repository = "${aws_ecr_repository.ECR_REPOSITORY.name}"
+  repository = aws_ecr_repository.ECR_REPOSITORY.name
 
   policy = <<EOF
 {
@@ -19,7 +19,7 @@ resource "aws_ecr_repository_policy" "ECR_REPOSITORY_POLICY" {
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${var.ACCOUNT_NAME}:root"
+                    "arn:aws:iam::var.ACCOUNT_NAME:root"
                 ]
             },
             "Action": [

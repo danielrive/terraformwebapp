@@ -1,33 +1,33 @@
 ## Variables 
 
-variable "ENVIRONMENT"{
-  type = "string"    
+variable "ENVIRONMENT" {
+  type = string
 }
 
 variable "CPU" {
-    type = "string"
+  type = string
 }
 
 variable "MEMORY" {
-    type = "string"
+  type = string
 }
 
 variable "URL_REPO" {
-    type = "string"
+  type = string
 }
 
 variable "ECS_ROLE" {
-    type = "string"
+  type = string
 }
 
 variable "AWS_REGION" {
-    type = "string"
+  type = string
 }
 
 variable "CONTAINER_PORT" {
-    type = "string"
+  type = string
 }
 
 variable "LAUNCH_TYPE" {
-    type = "string"
+  type = string
 }

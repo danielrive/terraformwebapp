@@ -4,13 +4,13 @@ resource "aws_ecs_task_definition" "ECS_TF" {
   family                   = "TaskDF-${var.ENVIRONMENT}-"
   network_mode             = "awsvpc"
   requires_compatibilities = [var.LAUNCH_TYPE]
-  cpu                      = "${var.CPU}"
-  memory                   = "${var.MEMORY}"
-  execution_role_arn       = "${var.ECS_ROLE}"
+  cpu                      = var.CPU
+  memory                   = var.MEMORY
+  execution_role_arn       = var.ECS_ROLE
   tags = {
     Created_by = "Terraform"
   }
-  container_definitions    = <<DEFINITION
+  container_definitions = <<DEFINITION
             [
               {
                 "logConfiguration": {
@@ -39,6 +39,6 @@ resource "aws_ecs_task_definition" "ECS_TF" {
 
 #---------- Cloudwatch Log_group  ----------
 resource "aws_cloudwatch_log_group" "LOGS_GROUP_ECS" {
-  name = "/ecs/TaskDF-${var.ENVIRONMENT}"
+  name              = "/ecs/TaskDF-${var.ENVIRONMENT}"
   retention_in_days = 7
 }

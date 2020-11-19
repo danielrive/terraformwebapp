@@ -1,13 +1,13 @@
 # # # # #  Principal variables # # # 
 
 variable "ENVIRONMENT_NAME" {
-    type="string"
+  type = string
 }
 
 variable "AWS_REGION" {
-    type="string"
+  type = string
 }
 
 variable "AWS_PROFILE" {
-    type="string"
+  type = string
 }

@@ -1,5 +1,5 @@
 ## Variables 
 
 variable "ENVIRONMENT" {
-    type = "string"
+  type = string
 }
