@@ -4,6 +4,6 @@ variable "ENVIRONMENT" {
   type = string
 }
 
-variable "ACCOUNT_NAME" {
+variable "ACCOUNT_NUMBER" {
   type = string
 }

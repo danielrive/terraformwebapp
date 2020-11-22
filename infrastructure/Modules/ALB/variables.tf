@@ -33,3 +33,7 @@ variable "IDLE_TIMEOUT" {
   type    = number
   default = 60
 }
+
+variable "CERT_ARN" {
+  type = string
+}

@@ -24,24 +24,14 @@ data "aws_availability_zones" "available" {
 #------- Public Subnets -------
 
 # --- First Public Subnet
-resource "aws_subnet" "PUBLIC_SUBNET_1" {
-  availability_zone       = data.aws_availability_zones.available.names[0]
+resource "aws_subnet" "PUBLIC_SUBNETs" {
+  count                   = 2
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   vpc_id                  = aws_vpc.VPC.id
-  cidr_block              = cidrsubnet(aws_vpc.VPC.cidr_block, 7, 0)
+  cidr_block              = cidrsubnet(aws_vpc.VPC.cidr_block, 7, count.index + 1)
   map_public_ip_on_launch = true
   tags = {
-    Name       = "Subnet_Public1_${var.ENVIRONMENT}"
-    Created_by = "Terraform"
-  }
-}
-# --- Second Public Subnet
-resource "aws_subnet" "PUBLIC_SUBNET_2" {
-  availability_zone       = data.aws_availability_zones.available.names[1]
-  vpc_id                  = aws_vpc.VPC.id
-  cidr_block              = cidrsubnet(aws_vpc.VPC.cidr_block, 7, 1)
-  map_public_ip_on_launch = true
-  tags = {
-    Name       = "Subnet_Public2_${var.ENVIRONMENT}"
+    Name       = "Subnet_Public_${count.index}_${var.ENVIRONMENT}"
     Created_by = "Terraform"
   }
 }
@@ -49,23 +39,13 @@ resource "aws_subnet" "PUBLIC_SUBNET_2" {
 #------- Private Subnets -------
 
 # --- First Private Subnet
-resource "aws_subnet" "PRIVATE_SUBNET_1" {
-  availability_zone = data.aws_availability_zones.available.names[0]
+resource "aws_subnet" "PRIVATE_SUBNETs" {
+  count             = 2
+  availability_zone = data.aws_availability_zones.available.names[count.index]
   vpc_id            = aws_vpc.VPC.id
-  cidr_block        = cidrsubnet(aws_vpc.VPC.cidr_block, 7, 2)
+  cidr_block        = cidrsubnet(aws_vpc.VPC.cidr_block, 7, count.index + 3)
   tags = {
-    Name       = "Subnet_Private1_${var.ENVIRONMENT}"
-    Created_by = "Terraform"
-  }
-}
-
-# --- Second Private Subnet
-resource "aws_subnet" "PRIVATE_SUBNET_2" {
-  availability_zone = data.aws_availability_zones.available.names[1]
-  vpc_id            = aws_vpc.VPC.id
-  cidr_block        = cidrsubnet(aws_vpc.VPC.cidr_block, 7, 3)
-  tags = {
-    Name       = "Subnet_Private2_${var.ENVIRONMENT}"
+    Name       = "Subnet_Private_${count.index}_${var.ENVIRONMENT}"
     Created_by = "Terraform"
   }
 }
@@ -109,7 +89,7 @@ resource "aws_eip" "EIP" {
 #------- Attach EIP to Nat Gateway -------
 resource "aws_nat_gateway" "NATGW" {
   allocation_id = aws_eip.EIP.id
-  subnet_id     = aws_subnet.PUBLIC_SUBNET_2.id
+  subnet_id     = aws_subnet.PUBLIC_SUBNETs[0].id
   tags = {
     Name       = "NAT_${var.ENVIRONMENT}"
     Created_by = "Terraform"
@@ -133,23 +113,17 @@ resource "aws_route_table" "RT_PRIVATE" {
   depends_on = [aws_nat_gateway.NATGW]
 }
 #------- Private Subnets Association -------
-resource "aws_route_table_association" "RT_ASS_PRIV_SUBNET_1" {
-  subnet_id      = aws_subnet.PRIVATE_SUBNET_1.id
-  route_table_id = aws_route_table.RT_PRIVATE.id
-  depends_on     = [aws_route_table.RT_PRIVATE]
-}
-resource "aws_route_table_association" "RT_ASS_PRIV_SUBNET_2" {
-  subnet_id      = aws_subnet.PRIVATE_SUBNET_2.id
+resource "aws_route_table_association" "RT_ASS_PRIV_SUBNETs" {
+  count          = 2
+  subnet_id      = aws_subnet.PRIVATE_SUBNETs[count.index].id
   route_table_id = aws_route_table.RT_PRIVATE.id
   depends_on     = [aws_route_table.RT_PRIVATE]
 }
 
 #------- Public Subnets Association -------
-resource "aws_route_table_association" "RT_ASS_PUB_SUBNET_1" {
-  subnet_id      = aws_subnet.PUBLIC_SUBNET_1.id
+resource "aws_route_table_association" "RT_ASS_PUB_SUBNETs" {
+  count          = 2
+  subnet_id      = aws_subnet.PUBLIC_SUBNETs[count.index].id
   route_table_id = aws_vpc.VPC.main_route_table_id
 }
-resource "aws_route_table_association" "RT_ASS_PUB_SUBNET_2" {
-  subnet_id      = aws_subnet.PUBLIC_SUBNET_2.id
-  route_table_id = aws_vpc.VPC.main_route_table_id
-}
+

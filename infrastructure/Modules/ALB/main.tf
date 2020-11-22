@@ -35,18 +35,18 @@ resource "aws_alb_listener" "HTTP_LISTENER" {
 
 }
 
-# #---------- Listener HTTPS ----------
+#---------- Listener HTTPS ----------
 
-# resource "aws_alb_listener" "HTTPS_LISTENER" {
-#   load_balancer_arn = aws_alb.ALB.id
-#   port              = "443"
-#   protocol          = "HTTPS"
-#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
-#   certificate_arn   = var.Cert_ARN
-#   default_action {
-#     target_group_arn = var.TARGET_GROUP
-#     type             = "forward"
-#   }
-#   depends_on = [aws_alb.ALB]
+resource "aws_alb_listener" "HTTPS_LISTENER" {
+  load_balancer_arn = aws_alb.ALB.id
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+  certificate_arn   = var.CERT_ARN
+  default_action {
+    target_group_arn = var.TARGET_GROUP
+    type             = "forward"
+  }
+  depends_on = [aws_alb.ALB]
 
-# }
+}

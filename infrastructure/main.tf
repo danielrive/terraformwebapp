@@ -11,8 +11,13 @@ resource "random_id" "random_id" {
 
 # # # Account ID  # # #
 
-data "aws_caller_identity" "ID_Current_Account" {}
+data "aws_caller_identity" "ID_CURRENT_ACCOUNT" {}
 
+# # # Certificate ARN  # # #
+
+data "aws_acm_certificate" "CERTIFICATE" {
+  domain = "danielrive.site"
+}
 
 # # #   Networking  # # #
 
@@ -60,6 +65,7 @@ module "ALB_WEBAPP" {
   RANDOM_ID      = random_id.random_id.hex
   TARGET_GROUP   = module.Target_WebAPP.TargetGroup_ARN
   ENABLE_LOGS    = false
+  CERT_ARN       = data.aws_acm_certificate.CERTIFICATE.arn
 }
 
 # # # ECS Cluster # # #
@@ -72,9 +78,9 @@ module "ECS_Cluster_WEBAPP" {
 # # # ECR REPO # # #
 
 module "ECR_WEBAPP" {
-  source       = "./Modules/ECS/ECR"
-  ACCOUNT_NAME = data.aws_caller_identity.ID_Current_Account.account_id
-  ENVIRONMENT  = var.ENVIRONMENT_NAME
+  source         = "./Modules/ECS/ECR"
+  ACCOUNT_NUMBER = data.aws_caller_identity.ID_CURRENT_ACCOUNT.account_id
+  ENVIRONMENT    = var.ENVIRONMENT_NAME
 }
 
 # # # IAM ROLE FOR ECS TASK # # #
@@ -121,4 +127,14 @@ module "ECS_SERVICE_WEBAPP" {
   SUBNETS        = [module.Networking.SubnetPrivates[0], module.Networking.SubnetPrivates[1]]
   TG_ARN         = module.Target_WebAPP.TargetGroup_ARN
   CONTAINER_PORT = 9090
+}
+
+
+# # # S3 Website # # # 
+
+module "S3_WEB_SITE" {
+  source         = "./Modules/S3"
+  BUCKET_NAME    = "web.danielrive.site"
+  ENABLE_WEBSITE = true
+  PATH_INDEX     = "../app/index.html"
 }

@@ -1,8 +1,17 @@
 #####  Variables  ######
 
-variable "ENVIRONMENT" {
+variable "BUCKET_NAME" {
   type = string
 }
-variable "CIDR" {
-  type = list
+
+variable "ENABLE_WEBSITE" {
+  type    = bool
+  default = false
 }
+
+variable "PATH_INDEX" {
+  type    = string
+  default = "./"
+}
+
+
