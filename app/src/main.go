@@ -1,30 +1,28 @@
 package main
 
 import (
-	"html/template"
+	"fmt"
 	"log"
 	"net/http"
-	"time"
 )
 
-type Home struct {
-	Name string
-	Time string
-}
-
-var templates = template.Must(template.ParseFiles("../template/home.html"))
-
-func view(w http.ResponseWriter, r *http.Request) {
-	homeinfo := Home{"Anonymous", time.Now().Format(time.Stamp)}
-	if name := r.FormValue("name"); name != "" {
-		homeinfo.Name = name
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/home" {
+		http.Error(w, "404 not found.", http.StatusNotFound)
+		return
 	}
-	if err := templates.ExecuteTemplate(w, "home.html", homeinfo); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+
+	// if r.Method != "GET" {
+	//     http.Error(w, "Method is not supported.", http.StatusNotFound)
+	//     return
+	// }
+	fmt.Fprintf(w, "Hello!")
 }
 
 func main() {
-	http.HandleFunc("/", view)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	// get env variables
+
+	http.HandleFunc("/home", helloHandler)
+
+	log.Fatal(http.ListenAndServe(":9090", nil))
 }
